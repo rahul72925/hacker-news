@@ -1,8 +1,11 @@
 import React from "react";
 import { InputField, Spacer } from "../../component";
 import { HomeContainer, PublishedDate, StyledCard } from "./styled";
+import { useRouter } from "next/router";
 
 export const HomePage = () => {
+  const router = useRouter();
+
   const [newsList, setNewsList] = React.useState([]);
   const [isNewsFetching, setIsNewsFetching] = React.useState(false);
 
@@ -16,6 +19,10 @@ export const HomePage = () => {
     const data = await result.json();
     setNewsList(data.hits);
     setIsNewsFetching(false);
+  };
+
+  const handleOnNewsClick = (objectID) => {
+    router.push(`/news/${objectID}`);
   };
 
   return (
@@ -44,7 +51,13 @@ export const HomePage = () => {
               if (!news.title) return null;
               return (
                 <StyledCard key={news.objectID}>
-                  <a>
+                  <a
+                    href={`/news/${news.objectID}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleOnNewsClick(news.objectID);
+                    }}
+                  >
                     <span>{news.title}</span>
                     <PublishedDate>
                       published: {dateFormatter(news.created_at)}
