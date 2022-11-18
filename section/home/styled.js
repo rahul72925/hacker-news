@@ -27,3 +27,10 @@ export const StyledCard = styled.div`
     margin: 0.6em 0.5em;
   }
 `;
+export const FillerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 116px);
+  flex-direction: column;
+`;

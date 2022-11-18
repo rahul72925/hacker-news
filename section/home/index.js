@@ -1,24 +1,42 @@
 import React from "react";
 import { InputField, Spacer } from "../../component";
-import { HomeContainer, PublishedDate, StyledCard } from "./styled";
+import {
+  FillerWrapper,
+  HomeContainer,
+  PublishedDate,
+  StyledCard,
+} from "./styled";
 import { useRouter } from "next/router";
+import { Else, If, Then } from "react-if";
+import { ErrorFiller, NoDataFiller } from "../../assets";
+import { Loader } from "../../component/loader";
 
 export const HomePage = () => {
   const router = useRouter();
 
   const [newsList, setNewsList] = React.useState([]);
-  const [isNewsFetching, setIsNewsFetching] = React.useState(false);
+  const [newsFetchingStatus, setNewsFetchingStatus] = React.useState("IDLE");
 
   const handleSearchFiledOnChange = async (e) => {
-    setIsNewsFetching(true);
-    const { value } = e.target;
+    try {
+      setNewsFetchingStatus("LOADING");
+      const { value } = e.target;
+      if (value.length === 0) {
+        setNewsFetchingStatus("IDLE");
+        setNewsList([]);
+        return;
+      }
 
-    const result = await fetch(
-      `http://hn.algolia.com/api/v1/search?query=${value}`
-    );
-    const data = await result.json();
-    setNewsList(data.hits);
-    setIsNewsFetching(false);
+      const result = await fetch(
+        `http://hn.algolia.com/api/v1/search?query=${value}`
+      );
+      const data = await result.json();
+      setNewsList(data.hits);
+      setNewsFetchingStatus("SUCCEEDED");
+    } catch (error) {
+      console.error("new fetching error", error);
+      setNewsFetchingStatus("ERROR");
+    }
   };
 
   const handleOnNewsClick = (objectID) => {
@@ -44,29 +62,74 @@ export const HomePage = () => {
         />
       </div>
       <Spacer size="7px" />
-      <div>
-        {newsList.length === 0
-          ? null
-          : newsList.map((news) => {
-              if (!news.title) return null;
-              return (
-                <StyledCard key={news.objectID}>
-                  <a
-                    href={`/news/${news.objectID}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleOnNewsClick(news.objectID);
-                    }}
+      <If condition={newsFetchingStatus === "IDLE"}>
+        <Then>
+          <FillerWrapper>
+            <NoDataFiller />
+            <h2>Search for get latest Hacker NEWS</h2>
+          </FillerWrapper>
+        </Then>
+        <Else>
+          <If condition={newsFetchingStatus === "LOADING"}>
+            <Then>
+              <FillerWrapper>
+                <Loader />
+              </FillerWrapper>
+            </Then>
+            <Else>
+              <If condition={newsFetchingStatus === "ERROR"}>
+                <Then>
+                  <FillerWrapper>
+                    <ErrorFiller />
+                    <h2>Something went wrong!</h2>
+                  </FillerWrapper>
+                </Then>
+                <Else>
+                  <If
+                    condition={
+                      newsFetchingStatus === "SUCCEEDED" &&
+                      newsList.length === 0
+                    }
                   >
-                    <span>{news.title}</span>
-                    <PublishedDate>
-                      published: {dateFormatter(news.created_at)}
-                    </PublishedDate>
-                  </a>
-                </StyledCard>
-              );
-            })}
-      </div>
+                    <Then>
+                      <FillerWrapper>
+                        <NoDataFiller />
+                        <h2>No news found</h2>
+                      </FillerWrapper>
+                    </Then>
+                    <Else>
+                      <div>
+                        {newsList.length === 0
+                          ? null
+                          : newsList.map((news) => {
+                              if (!news.title) return null;
+                              return (
+                                <StyledCard key={news.objectID}>
+                                  <a
+                                    href={`/news/${news.objectID}`}
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleOnNewsClick(news.objectID);
+                                    }}
+                                  >
+                                    <span>{news.title}</span>
+                                    <PublishedDate>
+                                      published:{" "}
+                                      {dateFormatter(news.created_at)}
+                                    </PublishedDate>
+                                  </a>
+                                </StyledCard>
+                              );
+                            })}
+                      </div>
+                    </Else>
+                  </If>
+                </Else>
+              </If>
+            </Else>
+          </If>
+        </Else>
+      </If>
     </HomeContainer>
   );
 };
