@@ -1,18 +1,30 @@
 import React from "react";
 import { Header, Spacer } from "../../component";
-import { NewsSection, PublishedDate, StyledNewsContainer } from "./styled";
+import {
+  CommentCard,
+  CommentDate,
+  CommentSection,
+  CommentText,
+  ComponentCardHeader,
+  NewsSection,
+  NoCommentAvailable,
+  PublishedDate,
+  StyledNewsContainer,
+} from "./styled";
 import moment from "moment";
-import { StarIcon } from "../../assets";
+import { StarIcon, UserIcon } from "../../assets";
 import { Divider } from "../../component/divider";
+import parse from "html-react-parser";
 
 export const NewsPage = ({ news }) => {
+  console.log(news);
   return (
     <StyledNewsContainer>
       <Header />
       <NewsSection>
         <div>
           <a href={news.url} target="_blank">
-            <h2>{news.title}</h2>
+            <h1>{news.title}</h1>
             <div
               style={{ display: "flex", alignItems: "center" }}
               title={`points: ${news.points}`}
@@ -28,6 +40,42 @@ export const NewsPage = ({ news }) => {
         <Spacer size="16px" />
         <Divider />
       </NewsSection>
+      <CommentSection>
+        <p
+          style={{
+            fontWeight: "bold",
+            fontSize: "18px",
+          }}
+        >
+          Comments:
+        </p>
+        {news.children.length === 0 ? (
+          <NoCommentAvailable>No comments available</NoCommentAvailable>
+        ) : (
+          news.children.map((eachComment) => {
+            if (!eachComment.text) {
+              return null;
+            }
+            return (
+              <CommentCard>
+                <ComponentCardHeader>
+                  <UserIcon />
+                  <Spacer xAxis size="8px" />
+                  <span style={{ fontWeight: "bold" }}>
+                    {eachComment.author ? eachComment.author : "Anonymous"}
+                  </span>
+                  <CommentDate>
+                    {moment(eachComment.created_at).fromNow()}
+                  </CommentDate>
+                </ComponentCardHeader>
+                <Spacer size="6px" />
+                <CommentText>{parse(eachComment.text)}</CommentText>
+                <Spacer size="6px" />
+              </CommentCard>
+            );
+          })
+        )}
+      </CommentSection>
     </StyledNewsContainer>
   );
 };

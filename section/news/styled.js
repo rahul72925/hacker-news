@@ -4,7 +4,7 @@ export const StyledNewsContainer = styled.div``;
 
 export const NewsSection = styled.section`
   padding: 0 2em;
-  h2 {
+  h1 {
     margin: 0.5em 0;
   }
   @media (max-width: 800px) {
@@ -23,4 +23,39 @@ export const PublishedDate = styled.p`
   }
 `;
 
-export const CommentSection = styled.section``;
+export const CommentSection = styled.section`
+  padding: 0 2em;
+  @media (max-width: 800px) {
+    padding: 0 1em;
+  }
+`;
+
+export const CommentCard = styled.div`
+  margin: 1em 0;
+  p {
+    margin: 0;
+  }
+`;
+
+export const ComponentCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const CommentText = styled.p`
+  overflow: hidden;
+  font-size: 14px;
+  color: #00000080;
+`;
+
+export const CommentDate = styled.span`
+  font-size: 12px;
+  font-style: italic;
+  position: absolute;
+  right: 0;
+  margin-right: 2em;
+`;
+
+export const NoCommentAvailable = styled.p`
+  font-style: italic;
+`;
