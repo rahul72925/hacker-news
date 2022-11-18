@@ -11,9 +11,12 @@ import { Else, If, Then } from "react-if";
 import { ErrorFiller, NoDataFiller } from "../../assets";
 import { Loader } from "../../component/loader";
 import { debounce } from "../../utils/debounce";
+import { ClearIcon } from "../../assets/ClearIcon";
 
 export const HomePage = () => {
   const router = useRouter();
+
+  const inputRef = React.useRef();
 
   const [newsList, setNewsList] = React.useState([]);
   const [newsFetchingStatus, setNewsFetchingStatus] = React.useState("IDLE");
@@ -44,6 +47,11 @@ export const HomePage = () => {
     router.push(`/news/${objectID}`);
   };
 
+  const clearTextFiled = () => {
+    inputRef.current.clear();
+    setNewsFetchingStatus("IDLE");
+    setNewsList([]);
+  };
   return (
     <HomeContainer>
       <Spacer size="15px" />
@@ -55,12 +63,23 @@ export const HomePage = () => {
         }}
       >
         <InputField
+          ref={inputRef}
           placeholder="Search here..."
           style={{
             position: "sticky",
           }}
           onChange={handleSearchFiledOnChange}
         />
+        <Spacer xAxis size="6px" />
+        <span
+          style={{
+            cursor: "pointer",
+            visibility: newsFetchingStatus === "IDLE" ? "hidden" : "unset",
+          }}
+          onClick={clearTextFiled}
+        >
+          <ClearIcon />
+        </span>
       </div>
       <Spacer size="7px" />
       <If condition={newsFetchingStatus === "IDLE"}>
