@@ -66,4 +66,7 @@ export const ErrorWrapper = styled.div`
   align-items: center;
   height: calc(100vh - 64px);
   flex-direction: column;
+  h2 {
+    text-align: center;
+  }
 `;

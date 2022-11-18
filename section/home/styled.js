@@ -33,4 +33,7 @@ export const FillerWrapper = styled.div`
   align-items: center;
   height: calc(100vh - 116px);
   flex-direction: column;
+  h2 {
+    text-align: center;
+  }
 `;
