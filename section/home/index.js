@@ -32,7 +32,7 @@ export const HomePage = () => {
       }
 
       const result = await fetch(
-        `http://hn.algolia.com/api/v1/search?query=${value}`
+        `https://hn.algolia.com/api/v1/search?query=${value}`
       );
       const data = await result.json();
       setNewsList(data.hits);
