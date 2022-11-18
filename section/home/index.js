@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Else, If, Then } from "react-if";
 import { ErrorFiller, NoDataFiller } from "../../assets";
 import { Loader } from "../../component/loader";
+import { debounce } from "../../utils/debounce";
 
 export const HomePage = () => {
   const router = useRouter();
@@ -17,7 +18,7 @@ export const HomePage = () => {
   const [newsList, setNewsList] = React.useState([]);
   const [newsFetchingStatus, setNewsFetchingStatus] = React.useState("IDLE");
 
-  const handleSearchFiledOnChange = async (e) => {
+  const handleSearchFiledOnChange = debounce(async (e) => {
     try {
       setNewsFetchingStatus("LOADING");
       const { value } = e.target;
@@ -37,7 +38,7 @@ export const HomePage = () => {
       console.error("new fetching error", error);
       setNewsFetchingStatus("ERROR");
     }
-  };
+  }, 500);
 
   const handleOnNewsClick = (objectID) => {
     router.push(`/news/${objectID}`);
