@@ -68,7 +68,7 @@ export const NewsPage = ({ news, status }) => {
                   return null;
                 }
                 return (
-                  <CommentCard>
+                  <CommentCard key={eachComment.id}>
                     <ComponentCardHeader>
                       <UserIcon />
                       <Spacer xAxis size="8px" />
